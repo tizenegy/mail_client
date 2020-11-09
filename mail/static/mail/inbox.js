@@ -45,9 +45,56 @@ function load_mailbox(mailbox) {
   document.querySelector('#compose-view').style.display = 'none';
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
   // get data from api
-  fetch('/emails/sent')
-  .then(response => response.json())
-  .then(emails => console.log(emails));
+  url = '/emails/sent';
+  let emails = async (url) => {
+    let response = await fetch(url);
+    let result = await response.json();
+  }
+
+  // fetch('/emails/sent')
+  // .then(response => response.json())
+  // .then(json => console.log(json))
+  // // build list
+  // .then(json => {
+  //   const emails = tryParseJSON(`${json}`);
+  // });
+  
+  // // example json for testing
+  // const emails = tryParseJSON(
+  //   '{"eBooks":[{"language":"Pascal","edition":"third"},{"language":"Python","edition":"four"},{"language":"SQL","edition":"second"}]}'
+  // );
+
+  emails = tryParseJSON(`${emails}`);
+  
+  emails.eBooks.forEach(email => {
+  const element = document.createElement('div');
+  element.innerHTML = `Entry: ${email.subject}`;
+  // element.innerHTML = JSON.stringify(email);
+  element.addEventListener('click', function() {
+      console.log('This element has been clicked!')
+  });
+  document.querySelector('#emails-view').append(element);
+  });
+
 }
 
+function tryParseJSON (jsonString){
+  try {
+      var o = JSON.parse(jsonString);
+
+      // Handle non-exception-throwing cases:
+      // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+      // but... JSON.parse(null) returns null, and typeof null === "object", 
+      // so we must check for that, too. Thankfully, null is falsey, so this suffices:
+      if (o && typeof o === "object") {
+        console.log('it is a json!');
+        return o;
+      }
+  }
+  catch (e) {
+    console.log('problem parsing json!');
+   }
+  return false;
+};

@@ -18,13 +18,15 @@ class Email(models.Model):
 
     def serialize(self):
         return {
-            "id": self.id,
-            "sender": self.sender.email,
-            "recipients": [user.email for user in self.recipients.all()],
+            # "id": self.id,
+            # "sender": self.sender.email,
+            # "recipients": [user.email for user in self.recipients.all()],
             "subject": self.subject,
-            "body": self.body,
-            "timestamp": self.timestamp.strftime("%c"),
+            # "body": self.body,
+            # because of bug in distribution code i had to simplify:
+            # "timestamp": self.timestamp.strftime("%c"),
+            # this was the distribution code:
             # "timestamp": self.timestamp.strftime("%b %-d %Y, %-I:%M %p"),
-            "read": self.read,
-            "archived": self.archived
+            # "read": self.read,
+            # "archived": self.archived
         }
