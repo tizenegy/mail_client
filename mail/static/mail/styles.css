@@ -3,8 +3,8 @@ textarea {
 }
 .email {
     background-color: white;
-    border: 1px solid mediumturquoise;
-    color: darkgrey;
+    border: 1px solid blue;
+    color: black;
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     padding: 20px;
