@@ -66,8 +66,8 @@ function load_mailbox(mailbox) {
         settings.set('subject', 'card-title');
         settings.set('sender', 'card-subtitle mb-2 text-muted');
         settings.set('timestamp', 'card-text');
-        settings.set('recipients', 'card-text');
-        settings.set('body', 'card-text');
+        // settings.set('recipients', 'card-text');
+        // settings.set('body', 'card-text');
         let element_set = new Map();
         element_set.set('card-title', 'h5');
         element_set.set('card-subtitle mb-2 text-muted', 'h6');
@@ -79,7 +79,11 @@ function load_mailbox(mailbox) {
           const divider = document.createElement('div');
           divider.className = 'divider';
           container.className = 'card-body';
-          wrapper.className = 'card';
+          if (email.read === false){
+            wrapper.className = 'card mb-3';
+          } else {
+            wrapper.className = 'card bg-light mb-3';
+          }
           wrapper.appendChild(container);
           wrapper.addEventListener('click', function() {
             console.log('This element has been clicked!')
@@ -90,7 +94,7 @@ function load_mailbox(mailbox) {
               const html_tag = element_set.get(card_element);
               const new_element = document.createElement(html_tag);
               new_element.className = card_element;
-              new_element.innerHTML = `${key}: ${email[key]}`;
+              new_element.innerHTML = `${email[key]}`;
               if (card_element === 'card-title'){
                 container.prepend(new_element);
               } else if (card_element === 'card-text') {
