@@ -76,21 +76,31 @@ function load_mailbox(mailbox) {
         emails.forEach(email => {
           const wrapper = document.createElement('div');
           const container = document.createElement('div');
+          const divider = document.createElement('div');
+          divider.className = 'divider';
           container.className = 'card-body';
           wrapper.className = 'card';
           wrapper.appendChild(container);
+          wrapper.addEventListener('click', function() {
+            console.log('This element has been clicked!')
+          });
           Object.keys(email).forEach((key) => {
             const card_element = settings.get(key);
             if (card_element!==undefined){
-              console.log(card_element);
-              console.log(element_set.get('card-text'));
-              console.log(element_set.get(card_element));
-              const key_div = document.createElement(element_set.get(card_element));
-              key_div.className = card_element;
-              key_div.innerHTML = `${key}: ${email[key]}`;
-              container.appendChild(key_div);
+              const html_tag = element_set.get(card_element);
+              const new_element = document.createElement(html_tag);
+              new_element.className = card_element;
+              new_element.innerHTML = `${key}: ${email[key]}`;
+              if (card_element === 'card-title'){
+                container.prepend(new_element);
+              } else if (card_element === 'card-text') {
+                divider.appendChild(new_element);
+              } else {
+                container.appendChild(new_element);
+              }
             }
           });
+          container.appendChild(divider);
           document.querySelector('#emails-view').append(wrapper);
           });
           document.querySelector('#loader').style.display = 'none';

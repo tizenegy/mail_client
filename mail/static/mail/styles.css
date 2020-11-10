@@ -1,6 +1,9 @@
 textarea {
     min-height: 400px;
 }
+.divider {
+    margin-top: 2em;
+}
 .email {
     background-color: white;
     border: 1px solid blue;
