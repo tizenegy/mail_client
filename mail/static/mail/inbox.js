@@ -141,7 +141,7 @@ function load_details(id) {
   // I think it is easier and faster to just pass the email object 
   // from the load_mailbox(email) to load_details(email)
   // instead of making another api call to /emails/<email_id>.
-  // It is implemented below anyway and commented out.
+  // The passing of the id and the GET request are implemented below anyway.
 
   fetch(`/emails/${id}`)
   .then(response => response.json())
@@ -156,6 +156,16 @@ function load_details(id) {
       document.querySelector('#emails-view').append(element);
       document.querySelector('#loader').style.display = 'none';
     } else {  
+
+
+        // mark this email as "read"
+        fetch(`/emails/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+              read: true
+          })
+        })
+        
 
   // map the correct styles to email properties
   let settings = new Map();
