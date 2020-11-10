@@ -60,24 +60,40 @@ function load_mailbox(mailbox) {
         element.innerHTML = `Wow, such empty.`;
         document.querySelector('#emails-view').append(element);
         document.querySelector('#loader').style.display = 'none';
-      } else {
-      emails.forEach(email => {
-        // array of email properties currently to be displayed
-        var display = ["sender", "recipients", "subject", "body", "timestamp"];
-        const container = document.createElement('div');
-        container.className = 'card';
-        Object.keys(email).forEach((key) => {
-          if (display.includes(key)){
-            const key_div = document.createElement('div');
-            key_div.className = 'card-text';
-            key_div.innerHTML = `${key}: ${email[key]}`;
-            container.appendChild(key_div);
-          }
+      } else {  
+        // map the correct styles to email properties
+        let settings = new Map();
+        settings.set('subject', 'card-title');
+        settings.set('sender', 'card-subtitle mb-2 text-muted');
+        settings.set('timestamp', 'card-text');
+        settings.set('recipients', 'card-text');
+        settings.set('body', 'card-text');
+        let element_set = new Map();
+        element_set.set('card-title', 'h5');
+        element_set.set('card-subtitle mb-2 text-muted', 'h6');
+        element_set.set('card-text', 'p');
 
-        });
-        document.querySelector('#emails-view').append(container);
-        });
-        document.querySelector('#loader').style.display = 'none';
+        emails.forEach(email => {
+          const wrapper = document.createElement('div');
+          const container = document.createElement('div');
+          container.className = 'card-body';
+          wrapper.className = 'card';
+          wrapper.appendChild(container);
+          Object.keys(email).forEach((key) => {
+            const card_element = settings.get(key);
+            if (card_element!==undefined){
+              console.log(card_element);
+              console.log(element_set.get('card-text'));
+              console.log(element_set.get(card_element));
+              const key_div = document.createElement(element_set.get(card_element));
+              key_div.className = card_element;
+              key_div.innerHTML = `${key}: ${email[key]}`;
+              container.appendChild(key_div);
+            }
+          });
+          document.querySelector('#emails-view').append(wrapper);
+          });
+          document.querySelector('#loader').style.display = 'none';
       }
   });
 
