@@ -54,14 +54,39 @@ function load_mailbox(mailbox) {
       // Print emails
       console.log(emails);
       // Show the emails
-      emails.forEach(email => {
+      if (isEmpty(emails)){
         const element = document.createElement('div');
         element.className = 'email';
-        element.innerHTML = `From: ${email.sender} To: ${email.recipients} Subject: ${email.subject} Message: ${email.body} Date: ${email.timestamp}`;
+        element.innerHTML = `Wow, such empty.`;
         document.querySelector('#emails-view').append(element);
+        document.querySelector('#loader').style.display = 'none';
+      } else {
+      emails.forEach(email => {
+        // array of email properties currently to be displayed
+        var display = ["sender", "recipients", "subject", "body", "timestamp"];
+        const container = document.createElement('div');
+        container.className = 'card';
+        Object.keys(email).forEach((key) => {
+          if (display.includes(key)){
+            const key_div = document.createElement('div');
+            key_div.className = 'card-text';
+            key_div.innerHTML = `${key}: ${email[key]}`;
+            container.appendChild(key_div);
+          }
+
+        });
+        document.querySelector('#emails-view').append(container);
         });
         document.querySelector('#loader').style.display = 'none';
+      }
   });
 
 }
 
+function isEmpty(obj) {
+  for(var key in obj) {
+      if(obj.hasOwnProperty(key))
+          return false;
+  }
+  return true;
+}
