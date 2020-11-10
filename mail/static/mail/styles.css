@@ -30,7 +30,7 @@ textarea {
   animation: load7 1.8s infinite ease-in-out;
 }
 .loader {
-  color: mediumturquoise;
+  color: #0275d8;
   font-size: 5px;
   margin: 20px auto;
   position: relative;
