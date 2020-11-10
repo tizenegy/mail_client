@@ -94,7 +94,6 @@ def mailbox(request, mailbox):
     # Return emails in reverse chronologial order
     emails = emails.order_by("-timestamp").all()
     json_response = [email.serialize() for email in emails]
-    num = 4
     return JsonResponse(json_response, safe=False)
 
 
