@@ -81,7 +81,7 @@ function load_mailbox(mailbox) {
       // Show the emails
       if (isEmpty(emails)){
         const element = document.createElement('div');
-        element.className = 'email';
+        element.className = 'card-body';
         element.innerHTML = `Wow, such empty.`;
         document.querySelector('#emails-view').append(element);
         document.querySelector('#loader').style.display = 'none';
