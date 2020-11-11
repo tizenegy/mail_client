@@ -113,22 +113,34 @@ function load_mailbox(mailbox) {
             }
           });
           // insert the buttons below
+          if (mailbox === "sent"){
+
+          }else{
           const archive_button = document.createElement('button');
           archive_button.className = 'btn btn-primary';
-          archive_button.innerHTML = 'Archive mail';
+          if (mailbox === "archive"){
+            archive_button.innerHTML = 'Unarchive';
+          }else{
+            archive_button.innerHTML = 'Archive mail';
+          }
+          
           // add listeners to buttons
           archive_button.addEventListener('click', function(e) {
             console.log('This button has been clicked!');
             mark_un_archived(email.id, email.archived);
             e.stopPropagation();
-            load_mailbox('inbox');
+            document.querySelector('#loader').style.display = 'block';
+            setTimeout(() => load_mailbox('inbox'), 1500);
           });
-
           divider.appendChild(archive_button);
+        }
+
+          
           container.appendChild(divider);
           document.querySelector('#emails-view').append(wrapper);
           });
           document.querySelector('#loader').style.display = 'none';
+        
       }
   });
 
@@ -169,7 +181,7 @@ function load_details(id) {
       document.querySelector('#emails-view').append(element);
       document.querySelector('#loader').style.display = 'none';
     } else {  
-      mark_un_read(email.id, email.read);      
+      mark_un_read(email.id);      
 
       // map the correct styles to email properties
       let settings = new Map();
@@ -237,10 +249,9 @@ function mark_un_archived(id, archive){
   console.log(`archived status changed`);
 }
 
-function mark_un_read(id, read){
+function mark_un_read(id){
   console.log(`changing read status of email: ${id}`);
-  console.log(`original status: ${read}`);
-  read = !read;
+  read = true;
   // change status
   fetch(`/emails/${id}`, {
     method: 'PUT',
