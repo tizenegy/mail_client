@@ -77,6 +77,7 @@ function load_mailbox(mailbox) {
         element_set.set('card-subtitle mb-2 text-muted', 'h6');
         element_set.set('card-text', 'p');
 
+        // build cards for each email
         emails.forEach(email => {
           const wrapper = document.createElement('div');
           const container = document.createElement('div');
@@ -94,6 +95,7 @@ function load_mailbox(mailbox) {
             console.log('This element has been clicked!');
             load_details(email.id);
           });
+          // put the details into the card
           Object.keys(email).forEach((key) => {
             const card_element = settings.get(key);
             if (card_element!==undefined){
@@ -110,6 +112,19 @@ function load_mailbox(mailbox) {
               }
             }
           });
+          // insert the buttons below
+          const archive_button = document.createElement('button');
+          archive_button.className = 'btn btn-primary';
+          archive_button.innerHTML = 'Archive mail';
+          // add listeners to buttons
+          archive_button.addEventListener('click', function(e) {
+            console.log('This button has been clicked!');
+            mark_un_archived(email.id, email.archived);
+            e.stopPropagation();
+            load_mailbox('inbox');
+          });
+
+          divider.appendChild(archive_button);
           container.appendChild(divider);
           document.querySelector('#emails-view').append(wrapper);
           });
@@ -126,8 +141,6 @@ function isEmpty(obj) {
   }
   return true;
 }
-
-// work in progress
 
 function load_details(id) {
   // hide other views
@@ -156,64 +169,84 @@ function load_details(id) {
       document.querySelector('#emails-view').append(element);
       document.querySelector('#loader').style.display = 'none';
     } else {  
+      mark_un_read(email.id, email.read);      
 
+      // map the correct styles to email properties
+      let settings = new Map();
+      settings.set('subject', 'card-title');
+      settings.set('sender', 'card-subtitle mb-2 text-muted');
+      settings.set('timestamp', 'card-text');
+      settings.set('recipients', 'card-text');
+      settings.set('body', 'card-text');
 
-        // mark this email as "read"
-        fetch(`/emails/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify({
-              read: true
-          })
-        })
-        
+      // map html elements to styles
+      let element_set = new Map();
+      element_set.set('card-title', 'h5');
+      element_set.set('card-subtitle mb-2 text-muted', 'h6');
+      element_set.set('card-text', 'p');
 
-  // map the correct styles to email properties
-  let settings = new Map();
-  settings.set('subject', 'card-title');
-  settings.set('sender', 'card-subtitle mb-2 text-muted');
-  settings.set('timestamp', 'card-text');
-  settings.set('recipients', 'card-text');
-  settings.set('body', 'card-text');
-
-  // map html elements to styles
-  let element_set = new Map();
-  element_set.set('card-title', 'h5');
-  element_set.set('card-subtitle mb-2 text-muted', 'h6');
-  element_set.set('card-text', 'p');
-
-  const wrapper = document.createElement('div');
-  const container = document.createElement('div');
-  const divider = document.createElement('div');
-  divider.className = 'divider';
-  container.className = 'card-body';
-  if (email.read === false){
-    wrapper.className = 'card mb-3';
-  } else {
-    wrapper.className = 'card bg-light mb-3';
-  }
-  wrapper.appendChild(container);
-  wrapper.addEventListener('click', function() {
-    console.log('This element has been clicked!')
-  });
-  Object.keys(email).forEach((key) => {
-    const card_element = settings.get(key);
-    if (card_element!==undefined){
-      const html_tag = element_set.get(card_element);
-      const new_element = document.createElement(html_tag);
-      new_element.className = card_element;
-      new_element.innerHTML = `${email[key]}`;
-      if (card_element === 'card-title'){
-        container.prepend(new_element);
-      } else if (card_element === 'card-text') {
-        divider.appendChild(new_element);
+      // build cards for each email
+      const wrapper = document.createElement('div');
+      const container = document.createElement('div');
+      const divider = document.createElement('div');
+      divider.className = 'divider';
+      container.className = 'card-body';
+      if (email.read === false){
+        wrapper.className = 'card mb-3';
       } else {
-        container.appendChild(new_element);
+        wrapper.className = 'card bg-light mb-3';
       }
+      wrapper.appendChild(container);
+      wrapper.addEventListener('click', function() {
+        console.log('This element has been clicked!')
+      });
+      Object.keys(email).forEach((key) => {
+        const card_element = settings.get(key);
+        if (card_element!==undefined){
+          const html_tag = element_set.get(card_element);
+          const new_element = document.createElement(html_tag);
+          new_element.className = card_element;
+          new_element.innerHTML = `${email[key]}`;
+          if (card_element === 'card-title'){
+            container.prepend(new_element);
+          } else if (card_element === 'card-text') {
+            divider.appendChild(new_element);
+          } else {
+            container.appendChild(new_element);
+          }
+        }
+      });
+      container.appendChild(divider);
+      document.querySelector('#detail-view').append(wrapper);
+      
+      document.querySelector('#loader').style.display = 'none';
     }
-  });
-  container.appendChild(divider);
-  document.querySelector('#detail-view').append(wrapper);
-  
-  document.querySelector('#loader').style.display = 'none';
+})}
+
+function mark_un_archived(id, archive){
+  console.log(`changing archived status of email: ${id}`);
+  console.log(`original status: ${archive}`);
+  archive = !archive;
+  // change status
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+    archived: archive
+    }) 
+  })
+  console.log(`archived status changed`);
 }
-  })}
+
+function mark_un_read(id, read){
+  console.log(`changing read status of email: ${id}`);
+  console.log(`original status: ${read}`);
+  read = !read;
+  // change status
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+    read: read
+    }) 
+  })
+  console.log(`read status changed`);
+}
