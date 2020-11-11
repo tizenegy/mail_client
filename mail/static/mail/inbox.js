@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose').addEventListener('click', () => {compose_email("")});
   // Form submit buttons
   document.querySelector('#compose-form').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
-function compose_email() {
+function compose_email(id) {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -22,10 +22,28 @@ function compose_email() {
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#loader').style.display = 'none';
 
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  let rec = "";
+  let sub = "";
+  let bod = "";
+
+  if (id !== ""){ 
+    fetch(`/emails/${parseInt(id)}`)
+    .then(response => response.json())
+    .then(email => {
+      if (isEmpty(email)){
+        console.log("email is empty.");
+      } else {  
+        console.log(email);
+        rec = email.sender;
+        sub = email.subject;
+        bod = email.body;
+      }
+      sub = sub.startsWith('Re:') ? sub : "Re: ".concat(sub);
+      document.querySelector('#compose-recipients').value = rec;
+      document.querySelector('#compose-subject').value = `${sub}`;
+      document.querySelector('#compose-body').value = `\r\r------------\rOn ${email.timestamp} ${email.sender} wrote:\r${bod}`;
+    })
+  }
 }
 
 async function send_email(){
@@ -242,7 +260,12 @@ function load_details(id) {
       reply_button.innerHTML = 'Reply';
           
       // add listeners to buttons
-      reply_button.addEventListener('click', compose_email);
+      reply_button.addEventListener('click', function(e) {
+        id = email.id;
+        console.log(`before passing: ${id}`);
+        compose_email(id);
+        e.stopPropagation();
+      });
       archive_button.addEventListener('click', function(e) {
         mark_un_archived(email.id, email.archived);
         e.stopPropagation();
