@@ -25,6 +25,7 @@ function compose_email(id) {
   let rec = "";
   let sub = "";
   let bod = "";
+  console.log(id);
 
   if (id !== ""){ 
     fetch(`/emails/${parseInt(id)}`)
@@ -43,6 +44,10 @@ function compose_email(id) {
       document.querySelector('#compose-subject').value = `${sub}`;
       document.querySelector('#compose-body').value = `\r\r------------\rOn ${email.timestamp} ${email.sender} wrote:\r${bod}`;
     })
+  } else {
+    document.querySelector('#compose-recipients').value = "";
+    document.querySelector('#compose-subject').value = "";
+    document.querySelector('#compose-body').value = "";
   }
 }
 
@@ -236,7 +241,7 @@ function load_details(id) {
           const html_tag = element_set.get(card_element);
           const new_element = document.createElement(html_tag);
           new_element.className = card_element;
-          new_element.innerHTML = `${email[key]}`;
+          new_element.innerText = `${email[key]}`;
           if (card_element === 'card-title'){
             container.prepend(new_element);
           } else if (card_element === 'card-text') {
