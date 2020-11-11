@@ -228,6 +228,26 @@ function load_details(id) {
           }
         }
       });
+
+      // add button
+      const archive_button = document.createElement('button');
+      archive_button.className = 'btn btn-primary';
+      if (email.archived === true){
+        archive_button.innerHTML = 'Unarchive';
+      }else{
+        archive_button.innerHTML = 'Archive mail';
+      }
+          
+      // add listeners to buttons
+      archive_button.addEventListener('click', function(e) {
+        console.log('This button has been clicked!');
+        mark_un_archived(email.id, email.archived);
+        e.stopPropagation();
+        document.querySelector('#loader').style.display = 'block';
+        setTimeout(() => load_mailbox('inbox'), 1500);
+      });
+      divider.appendChild(archive_button);
+
       container.appendChild(divider);
       document.querySelector('#detail-view').append(wrapper);
       
