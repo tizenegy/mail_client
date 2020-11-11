@@ -209,9 +209,9 @@ function load_details(id) {
         wrapper.className = 'card bg-light mb-3';
       }
       wrapper.appendChild(container);
-      wrapper.addEventListener('click', function() {
-        console.log('This element has been clicked!')
-      });
+      // wrapper.addEventListener('click', function() {
+      //   console.log('This element has been clicked!')
+      // });
       Object.keys(email).forEach((key) => {
         const card_element = settings.get(key);
         if (card_element!==undefined){
@@ -229,24 +229,28 @@ function load_details(id) {
         }
       });
 
-      // add button
+      // add buttons
       const archive_button = document.createElement('button');
-      archive_button.className = 'btn btn-primary';
+      const reply_button = document.createElement('button');
+      archive_button.className = 'btn btn-primary mr-2';
+      reply_button.className = 'btn btn-primary mr-2';
       if (email.archived === true){
         archive_button.innerHTML = 'Unarchive';
       }else{
         archive_button.innerHTML = 'Archive mail';
       }
+      reply_button.innerHTML = 'Reply';
           
       // add listeners to buttons
+      reply_button.addEventListener('click', compose_email);
       archive_button.addEventListener('click', function(e) {
-        console.log('This button has been clicked!');
         mark_un_archived(email.id, email.archived);
         e.stopPropagation();
         document.querySelector('#loader').style.display = 'block';
         setTimeout(() => load_mailbox('inbox'), 1500);
       });
       divider.appendChild(archive_button);
+      divider.appendChild(reply_button);
 
       container.appendChild(divider);
       document.querySelector('#detail-view').append(wrapper);
