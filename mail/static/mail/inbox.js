@@ -136,9 +136,7 @@ function load_mailbox(mailbox) {
             }
           });
           // insert the buttons below
-          if (mailbox === "sent"){
-
-          }else{
+          if (mailbox !== "sent"){
           const archive_button = document.createElement('button');
           archive_button.className = 'btn btn-primary';
           if (mailbox === "archive"){
@@ -253,15 +251,8 @@ function load_details(id) {
       });
 
       // add buttons
-      const archive_button = document.createElement('button');
       const reply_button = document.createElement('button');
-      archive_button.className = 'btn btn-primary mr-2';
       reply_button.className = 'btn btn-primary mr-2';
-      if (email.archived === true){
-        archive_button.innerHTML = 'Unarchive';
-      }else{
-        archive_button.innerHTML = 'Archive mail';
-      }
       reply_button.innerHTML = 'Reply';
           
       // add listeners to buttons
@@ -271,18 +262,26 @@ function load_details(id) {
         compose_email(id);
         e.stopPropagation();
       });
-      archive_button.addEventListener('click', function(e) {
-        mark_un_archived(email.id, email.archived);
-        e.stopPropagation();
-        document.querySelector('#loader').style.display = 'block';
-        setTimeout(() => load_mailbox('inbox'), 1500);
-      });
-      divider.appendChild(archive_button);
-      divider.appendChild(reply_button);
 
+      if (document.getElementById('current_user').innerHTML !== email.sender){
+        const archive_button = document.createElement('button');
+        archive_button.className = 'btn btn-primary mr-2';
+        if (email.archived === true){
+          archive_button.innerHTML = 'Unarchive';
+        }else{
+          archive_button.innerHTML = 'Archive mail';
+        }
+        archive_button.addEventListener('click', function(e) {
+          mark_un_archived(email.id, email.archived);
+          e.stopPropagation();
+          document.querySelector('#loader').style.display = 'block';
+          setTimeout(() => load_mailbox('inbox'), 1500);
+        });
+        divider.appendChild(archive_button);  
+      }
+      divider.appendChild(reply_button);
       container.appendChild(divider);
       document.querySelector('#detail-view').append(wrapper);
-      
       document.querySelector('#loader').style.display = 'none';
     }
 })}
